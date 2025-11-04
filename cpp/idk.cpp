@@ -4,7 +4,7 @@
 #include "include/utils.h"
 
 using Vec = glc::utils::vector<int, 20, 30, 40, 50>;
-using VecSlice = Vec::take<4>;
+using VecSlice = Vec::drop<2>;
 
 template <class T>
 std::string type_name() {

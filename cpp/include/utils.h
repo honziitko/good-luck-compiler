@@ -9,6 +9,9 @@ namespace glc {
         template <class Vec, size_t n, class Enable = void>
         struct vector_take_impl {};
 
+        template <class Vec, size_t n, class Enable = void>
+        struct  vector_drop_impl {};
+
         template <class T, T... vals>
         struct vector {
             template <size_t i>
@@ -23,6 +26,8 @@ namespace glc {
 
             template <size_t n>
             using take = typename vector_take_impl<vector, n>::type;
+            template <size_t n>
+            using drop = typename vector_drop_impl<vector, n>::type;
         };
 
         template <class T, T x, T... rest>
@@ -44,6 +49,17 @@ namespace glc {
         struct vector_take_impl<vector<T, x, xs...>, n, typename std::enable_if_t<(n > 0)> > {
             using tail = typename vector_take_impl<vector<T, xs...>, n-1>::type;
             using type = typename tail::template push_front<x>;
+        };
+
+        template <class T, T... xs>
+        struct vector_drop_impl<vector<T, xs...>, 0> {
+            using type = vector<T, xs...>;
+        };
+
+        template <class T, size_t n, T x, T... xs>
+        struct vector_drop_impl<vector<T, x, xs...>, n, std::enable_if_t<(n > 0)> > {
+            using tail = vector<T, xs...>;
+            using type = typename vector_drop_impl<tail, n-1>::type;
         };
     }
 }
