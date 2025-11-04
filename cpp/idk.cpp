@@ -4,6 +4,7 @@
 #include "include/utils.h"
 
 using Vec = glc::utils::vector<int, 20, 30, 40, 50>;
+using VecSlice = Vec::take<4>;
 
 template <class T>
 std::string type_name() {
@@ -21,6 +22,7 @@ struct Idk<glc::utils::vector<T, xs...> > {
 };
 
 int main() {
+    std::cout << type_name<VecSlice>() << "\n";
     std::cout << Idk<Vec>::f() << "\n";
     std::cout << Vec::at<0>() << "\n";
     std::cout << Vec::at<2>() << "\n";
