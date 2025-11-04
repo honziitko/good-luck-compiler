@@ -15,9 +15,6 @@ namespace glc {
         template <class V, class U>
         struct vector_concat_impl {};
 
-        template <class Vec, class T, T x, size_t i, class Enable = void>
-        struct vector_set_impl {};
-
         template <class T, T... vals>
         struct vector {
             template <size_t i>
@@ -39,7 +36,7 @@ namespace glc {
             using concat = typename vector_concat_impl<vector, U>::type;
 
             template <T x, size_t i>
-            using set = typename vector_set_impl<vector, T, x, i>::type;
+            using set = typename take<i>::template push_back<x>::template concat<drop<i+1>>;
         };
 
         template <class T, T x, T... rest>
@@ -77,19 +74,6 @@ namespace glc {
         template <class T, T... xs, T... ys>
         struct vector_concat_impl<vector<T, xs...>, vector<T, ys...> > {
             using type = vector<T, xs..., ys...>;
-        };
-
-        template <class T, T x, T... xs>
-        struct vector_set_impl<vector<T, xs...>, T, x, 0> {
-            using type = typename vector<T, xs...>::template drop<1>::template push_front<x>;
-        };
-
-        template <class T, T x, size_t i, T... xs>
-        struct vector_set_impl<vector<T, xs...>, T, x, i, std::enable_if_t<(i > 0)> > {
-            using self = vector<T, xs...>;
-            using left = typename self::template take<i>;
-            using right = typename self::template drop<i+1>;
-            using type = typename left::template push_back<x>::template concat<right>;
         };
     }
 }
