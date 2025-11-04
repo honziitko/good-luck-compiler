@@ -22,6 +22,6 @@ struct Idk<glc::utils::vector<T, xs...> > {
 
 int main() {
     std::cout << Idk<Vec>::f() << "\n";
-    std::cout << glc::utils::vector_at<Vec, 0>::value << "\n";
-    std::cout << glc::utils::vector_at<Vec, 2>::value << "\n";
+    std::cout << Vec::at<0>() << "\n";
+    std::cout << Vec::at<2>() << "\n";
 }
