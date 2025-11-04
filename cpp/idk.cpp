@@ -3,9 +3,9 @@
 #include <boost/core/demangle.hpp>
 #include "include/utils.h"
 
-using Vec = glc::utils::vector<int, 1, 2, 3>;
-using Uec = glc::utils::vector<int, 4, 5, 6>;
-using Wec = Vec::concat<Uec>;
+using Vec = glc::utils::vector<int, 55, 2, 3, 55, 5>;
+using Uec = Vec::set<1, 0>;
+using Wec = Uec::set<4, 3>;
 
 template <class T>
 std::string type_name() {
