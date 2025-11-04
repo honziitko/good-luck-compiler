@@ -11,6 +11,9 @@ namespace glc {
             static constexpr T at() {
                 return vector_at_impl<vector, i>::value;
             }
+
+            template <T x>
+            using push_back = vector<T, vals..., x>;
         };
 
         template <class T, T x, T... rest>
