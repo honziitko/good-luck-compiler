@@ -1,2 +1,4 @@
+CFLAGS=-Wall -Wextra -std=c++11 -pedantic
+
 idk: idk.cpp include/utils.h
-	g++ -o idk idk.cpp
+	g++ $(CFLAGS) -o idk idk.cpp
