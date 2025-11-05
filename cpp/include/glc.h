@@ -39,6 +39,7 @@ namespace glc {
     struct next_state_impl<Trans, machine_state<head, state, TapeLeft, TapeRight> > {
         static constexpr bool is_right = head >= 0;
         using Tape = utils::ternary<is_right, TapeRight, TapeLeft>;
+        using OtherTape = utils::ternary<is_right, TapeLeft, TapeRight>;
         static constexpr size_t tape_index = headToIndex(head);
         static constexpr Symbol read_symbol = Tape::template at<tape_index>();
         using Target = Trans<state, read_symbol>;
@@ -48,8 +49,9 @@ namespace glc {
         static constexpr Direction direction = Target::direction;
 
         static constexpr Head new_head = head + directionToOffset(direction);
-        using ResultLeft = machine_state<new_head, new_state, typename TapeLeft::template set<to_write, tape_index>, TapeRight>;
-        using ResultRight = machine_state<new_head, new_state, TapeLeft, typename TapeRight::template set<to_write, tape_index> >;
+        using NewTape = typename Tape::template set<to_write, tape_index>;
+        using ResultLeft = machine_state<new_head, new_state, NewTape, OtherTape>;
+        using ResultRight = machine_state<new_head, new_state, OtherTape, NewTape>;
         using type = utils::ternary<is_right, ResultRight, ResultLeft>;
     };
 };

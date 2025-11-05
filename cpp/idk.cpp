@@ -12,7 +12,7 @@ template<>
 struct TransitionTable<1, 1> : glc::transition_entry<1, 0, glc::Direction::left> {};
 
 using TapeLeft = glc::utils::vector<glc::Symbol, 1, 0, 1>;
-using TapeRight = glc::utils::vector<glc::Symbol, 0, 0, 0>;
+using TapeRight = glc::utils::vector<glc::Symbol>;
 
 using Machine0 = glc::machine_state<-1, 1, TapeLeft, TapeRight>;
 using Machine1 = glc::next_state<TransitionTable, Machine0>;
