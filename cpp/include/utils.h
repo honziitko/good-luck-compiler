@@ -3,6 +3,9 @@
 
 namespace glc {
     namespace utils {
+        template <bool cond, class T = void>
+        using constrain = typename std::enable_if<cond, T>::type;
+
         template <class Vec, size_t i>
         struct vector_at_impl {};
 
@@ -55,7 +58,7 @@ namespace glc {
         };
 
         template <class T, size_t n, T x, T... xs>
-        struct vector_take_impl<vector<T, x, xs...>, n, typename std::enable_if_t<(n > 0)> > {
+        struct vector_take_impl<vector<T, x, xs...>, n, constrain<(n > 0)> > {
             using tail = typename vector_take_impl<vector<T, xs...>, n-1>::type;
             using type = typename tail::template push_front<x>;
         };
@@ -66,7 +69,7 @@ namespace glc {
         };
 
         template <class T, size_t n, T x, T... xs>
-        struct vector_drop_impl<vector<T, x, xs...>, n, std::enable_if_t<(n > 0)> > {
+        struct vector_drop_impl<vector<T, x, xs...>, n, constrain<(n > 0)> > {
             using tail = vector<T, xs...>;
             using type = typename vector_drop_impl<tail, n-1>::type;
         };
