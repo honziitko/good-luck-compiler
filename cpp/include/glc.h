@@ -54,4 +54,20 @@ namespace glc {
         using ResultRight = machine_state<new_head, new_state, OtherTape, NewTape>;
         using type = utils::ternary<is_right, ResultRight, ResultLeft>;
     };
+
+    template <template <State, Symbol> class TransitionTable, class Machine>
+    struct have_fun_impl {};
+
+    template <template <State, Symbol> class Trans, Head head, class TapeLeft, class TapeRight>
+    struct have_fun_impl<Trans, machine_state<head, halt, TapeLeft, TapeRight> > {
+        using type = machine_state<head, halt, TapeLeft, TapeRight>;
+    };
+
+    template <template <State, Symbol> class Trans, Head head, State state, class TapeLeft, class TapeRight>
+    struct have_fun_impl<Trans, machine_state<head, state, TapeLeft, TapeRight> > {
+        using type = typename have_fun_impl<Trans, next_state<Trans, machine_state<head, state, TapeLeft, TapeRight> > >::type;
+    };
+
+    template <template <State, Symbol> class Trans, class Machine>
+    using have_fun = typename have_fun_impl<Trans, Machine>::type;
 };
