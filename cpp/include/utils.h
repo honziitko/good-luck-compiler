@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstddef>
 #include <type_traits>
 
@@ -78,5 +80,14 @@ namespace glc {
         struct vector_concat_impl<vector<T, xs...>, vector<T, ys...> > {
             using type = vector<T, xs..., ys...>;
         };
+
+        template <bool flag, class T, class U>
+        struct ternary_impl {};
+        template <class T, class U>
+        struct ternary_impl<true, T, U> { using type = T; };
+        template <class T, class U>
+        struct ternary_impl<false, T, U> { using type = U; };
+        template <bool flag, class T, class U>
+        using ternary = typename ternary_impl<flag, T, U>::type;
     }
 }
