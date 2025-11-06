@@ -74,4 +74,7 @@ namespace glc {
 
     template <template <State, Symbol> class Trans, class Machine>
     using loop = typename loop_impl<Trans, Machine>::type;
+
+    template <template <State, Symbol> class TransitionTable>
+    using have_fun = loop<TransitionTable, machine_state<0, 1, empty_tape, empty_tape> >;
 };
