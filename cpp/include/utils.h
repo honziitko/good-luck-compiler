@@ -26,6 +26,7 @@ namespace glc {
             static constexpr T at() {
                 return vector_at_impl<vector, i>::value;
             }
+            static constexpr size_t len = sizeof...(vals);
 
             template <T x>
             using push_back = vector<T, vals..., x>;

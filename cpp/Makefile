@@ -3,7 +3,7 @@ CFLAGS=$(BASECFLAGS) -std=c++11
 
 all: idk build
 
-idk: idk.cpp include/utils.h include/glc.h
+idk: idk.cpp include/utils.h include/glc.h include/randable.h
 	g++ $(CFLAGS) -o idk idk.cpp
 
 build: build.c

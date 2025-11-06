@@ -41,7 +41,9 @@ namespace glc {
         using Tape = utils::ternary<is_right, TapeRight, TapeLeft>;
         using OtherTape = utils::ternary<is_right, TapeLeft, TapeRight>;
         static constexpr size_t tape_index = headToIndex(head);
-        static constexpr Symbol read_symbol = Tape::template at<tape_index>();
+        static constexpr bool allocate = tape_index >= Tape::len;
+        using AllocatedTape = utils::ternary<allocate, typename Tape::template push_back<0>, Tape>;
+        static constexpr Symbol read_symbol = AllocatedTape::template at<tape_index>();
         using Target = Trans<state, read_symbol>;
 
         static constexpr Symbol to_write = Target::to_write;
@@ -49,7 +51,7 @@ namespace glc {
         static constexpr Direction direction = Target::direction;
 
         static constexpr Head new_head = head + directionToOffset(direction);
-        using NewTape = typename Tape::template set<to_write, tape_index>;
+        using NewTape = typename AllocatedTape::template set<to_write, tape_index>;
         using ResultLeft = machine_state<new_head, new_state, NewTape, OtherTape>;
         using ResultRight = machine_state<new_head, new_state, OtherTape, NewTape>;
         using type = utils::ternary<is_right, ResultRight, ResultLeft>;

@@ -4,14 +4,9 @@
 #include "include/glc.h"
 #include "include/randable.h"
 
-#define ZEROS_5  0, 0, 0, 0, 0
-#define ZEROS_10 ZEROS_5,  ZEROS_5
-#define ZEROS_20 ZEROS_10, ZEROS_10
+using EmptyTape = glc::utils::vector<glc::Symbol>;
 
-using TapeLeft = glc::utils::vector<glc::Symbol, ZEROS_20>;
-using TapeRight = glc::utils::vector<glc::Symbol, ZEROS_20>;
-
-using Machine0 = glc::machine_state<-1, 1, TapeLeft, TapeRight>;
+using Machine0 = glc::machine_state<0, 1, EmptyTape, EmptyTape>;
 using MachineN = glc::have_fun<glc::randable, Machine0>;
 
 template <class T>
