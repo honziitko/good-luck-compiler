@@ -61,6 +61,8 @@ Huh?)_
 
 ## :hammer_and_wrench: Usage
 
+### Zig
+
 ```zig
 const std = @import("std");
 const glc = @import("glcompiler");
@@ -71,20 +73,40 @@ pub fn main() !void {
 }
 ``` 
 
+### C++
+
+First and foremost, run the build system.
+
+(Note that this requires an ANSI C compiler.)
+
+```sh
+$ cc -o build build.c
+./build
+```
+
+```cpp
+#include <string>
+#include <iostream>
+#include <boost/core/demangle.hpp>
+#include <glc.h>
+#include <randable.h>
+
+using MachineN = glc::have_fun<glc::randable>;
+
+template <class T>
+std::string type_name() {
+    return boost::core::demangle(typeid(T).name());
+}
+
+int main() {
+    std::cout << type_name<MachineN>() << "\n";
+}
+```
+(Compile with `c++ -Iinclude`)
+
 # Colophon
 
 I sincerely apologize for using AI, but, I am not an expert in emojis nor
 marketing.
 I thought it was funny.
 In a serious project, I'de write the README myself.
-
-# Why the weird zig directory?
-
-This was intended to be a monorepo of different libraries in different
-languages.
-So far, only Zig is supported, so the directory structure looks weird.
-
-Languages:
-
-  - [x] Zig
-  - [ ] C++
