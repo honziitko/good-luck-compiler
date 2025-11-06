@@ -8,6 +8,8 @@ namespace glc {
     enum class Direction { left, right };
     static constexpr State halt = 0;
 
+    using empty_tape = utils::vector<Symbol>;
+
     template <State state_, Symbol symbol, Direction dir>
     struct transition_entry {
         static constexpr Symbol to_write = symbol;
@@ -58,18 +60,18 @@ namespace glc {
     };
 
     template <template <State, Symbol> class TransitionTable, class Machine>
-    struct have_fun_impl {};
+    struct loop_impl {};
 
     template <template <State, Symbol> class Trans, Head head, class TapeLeft, class TapeRight>
-    struct have_fun_impl<Trans, machine_state<head, halt, TapeLeft, TapeRight> > {
+    struct loop_impl<Trans, machine_state<head, halt, TapeLeft, TapeRight> > {
         using type = machine_state<head, halt, TapeLeft, TapeRight>;
     };
 
     template <template <State, Symbol> class Trans, Head head, State state, class TapeLeft, class TapeRight>
-    struct have_fun_impl<Trans, machine_state<head, state, TapeLeft, TapeRight> > {
-        using type = typename have_fun_impl<Trans, next_state<Trans, machine_state<head, state, TapeLeft, TapeRight> > >::type;
+    struct loop_impl<Trans, machine_state<head, state, TapeLeft, TapeRight> > {
+        using type = typename loop_impl<Trans, next_state<Trans, machine_state<head, state, TapeLeft, TapeRight> > >::type;
     };
 
     template <template <State, Symbol> class Trans, class Machine>
-    using have_fun = typename have_fun_impl<Trans, Machine>::type;
+    using loop = typename loop_impl<Trans, Machine>::type;
 };

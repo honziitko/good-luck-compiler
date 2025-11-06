@@ -4,10 +4,8 @@
 #include "include/glc.h"
 #include "include/randable.h"
 
-using EmptyTape = glc::utils::vector<glc::Symbol>;
-
-using Machine0 = glc::machine_state<0, 1, EmptyTape, EmptyTape>;
-using MachineN = glc::have_fun<glc::randable, Machine0>;
+using Machine0 = glc::machine_state<0, 1, glc::empty_tape, glc::empty_tape>;
+using MachineN = glc::loop<glc::randable, Machine0>;
 
 template <class T>
 std::string type_name() {
