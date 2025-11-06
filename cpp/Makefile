@@ -1,10 +1,16 @@
+.PHONY: all
+
+CC=cc
+CXX=c++
 BASECFLAGS=-Wall -Wextra -pedantic
-CFLAGS=$(BASECFLAGS) -std=c++11
+CXXFLAGS=$(BASECFLAGS) -std=c++11 -Iinclude
+CFLAGS=$(BASECFLAGS) -std=c89
 
-all: idk build
+all: example
 
-idk: idk.cpp include/utils.h include/glc.h include/randable.h
-	g++ $(CFLAGS) -o idk idk.cpp
+example: example.cpp build
+	./build
+	$(CXX) $(CXXFLAGS) -o example example.cpp
 
 build: build.c
-	gcc $(BASECFLAGS) -std=c89 -o build build.c
+	$(CC) $(CFLAGS) -o build build.c

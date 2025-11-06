@@ -2,3 +2,4 @@
 -Wextra
 -std=c++11
 -pedantic
+-Iinclude

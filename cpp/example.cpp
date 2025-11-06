@@ -1,8 +1,8 @@
 #include <string>
 #include <iostream>
 #include <boost/core/demangle.hpp>
-#include "include/glc.h"
-#include "include/randable.h"
+#include <glc.h>
+#include <randable.h>
 
 using MachineN = glc::have_fun<glc::randable>;
 
