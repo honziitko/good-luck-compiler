@@ -98,9 +98,9 @@ fn generateConfig() tm.Config(State, Symbol) {
     return out;
 }
 
-pub fn haveFun(writer: anytype) !void {
+pub fn haveFun() bool {
     const tmConfig = comptime generateConfig();
     const tmState = tm.State(tmConfig).init(.state_0);
     @compileLog(tmConfig.value);
-    try writer.writeAll(std.fmt.comptimePrint("TM Halts: {}\n", .{comptime tmState.halts()}));
+    return comptime tmState.halts();
 }

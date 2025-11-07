@@ -15,5 +15,5 @@ const state = tm.State(config).init(.A);
 
 pub fn main() !void {
     // @setEvalBranchQuota(std.math.maxInt(u32));
-    try glc.haveFun(std.io.getStdOut().writer());
+    std.debug.print("TM halts: {}\n", .{glc.haveFun()});
 }

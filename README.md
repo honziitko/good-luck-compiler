@@ -69,7 +69,7 @@ const glc = @import("glcompiler");
 
 pub fn main() !void {
     @setEvalBranchQuota(6767); // Set to BB for correctness
-    try glc.haveFun(std.io.getStdOut().writer());
+    std.debug.print("TM halts: {}\n", .{glc.haveFun()});
 }
 ``` 
 

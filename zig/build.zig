@@ -14,7 +14,7 @@ pub fn build(b: *std.Build) void {
     glc_module.addImport("tm", tm_module);
 
     const exe = b.addExecutable(.{
-        .root_source_file = b.path("src/example.zig"),
+        .root_source_file = b.path("example.zig"),
         .name = "example",
         .target = target,
         .optimize = optimize,
