@@ -81,7 +81,7 @@ First and foremost, run the build system.
 
 ```sh
 $ cc -o build build.c
-./build
+$ ./build
 ```
 
 ```cpp
