@@ -28,36 +28,35 @@ const State = GenerateEnum(config.num_states);
 // Apprently Zig's standard RNG is runtime-only
 // so we rolled our own
 const rng = struct {
-    pub const Int = u31;
-    pub fn linearCongruential(x: u31) u31 {
+    const randMax = 1 << 32 - 1;
+    pub fn linearCongruential(x: comptime_int) comptime_int {
         const m = 1 << 31;
         const a = 1103515245;
         const c = 1345;
 
-        const y: u62 = @intCast(x);
-        const out = (a * y + c) % m;
-        return out;
+        const out = (a * x + c) % m;
+        return out % m;
     }
-    const hash: fn (Int) Int = linearCongruential;
+    const hash: fn (comptime_int) comptime_int = linearCongruential;
 
-    pub fn intUpTo(seed: Int, n: comptime_int) comptime_int {
+    pub fn intUpTo(seed: comptime_int, n: comptime_int) comptime_int {
         // Without this, n could be teturned which we don't want
         // due to bias.
-        if (seed == std.math.maxInt(Int)) {
+        if (seed == randMax) {
             return n - 1;
         }
         const x: comptime_float = @floatFromInt(seed);
-        const max: comptime_float = @floatFromInt(std.math.maxInt(Int));
+        const max: comptime_float = @floatFromInt(randMax);
         const normalized = x / max;
         const scaled = normalized * n;
         return @intFromFloat(scaled);
     }
 
-    fn slice(comptime seed: Int, T: type, comptime xs: []const T) T {
+    fn slice(comptime seed: comptime_int, T: type, comptime xs: []const T) T {
         return xs[intUpTo(seed, xs.len)];
     }
 
-    pub fn getEnum(comptime seed: Int, E: type) E {
+    pub fn getEnum(comptime seed: comptime_int, E: type) E {
         const field = slice(seed, std.builtin.Type.EnumField, @typeInfo(E).@"enum".fields);
         return @enumFromInt(field.value);
     }
@@ -68,7 +67,7 @@ fn iterStruct(x: anytype) []const std.builtin.Type.StructField {
 }
 
 fn generateConfig() tm.Config(State, Symbol) {
-    comptime var rngState: comptime_int = @intCast(config.seed);
+    comptime var rngState: comptime_int = config.seed % rng.randMax;
 
     const Config = tm.Config(State, Symbol);
     comptime var out = Config{
