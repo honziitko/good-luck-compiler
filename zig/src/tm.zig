@@ -18,18 +18,18 @@ fn Struct2(Key: type, Value: type) type {
 
 pub const Direction = enum { left, right };
 
-pub fn Config(States: type, Symbol: type) type {
+pub fn Config(States: type, Symbol2: type) type {
     std.debug.assert(isEnum(States));
     const Field2 = struct {
         move: Direction,
-        write: Symbol,
+        write: Symbol2,
         state: ?States,
     };
-    const Entry2 = Struct2(Symbol, Field2);
+    const Entry2 = Struct2(Symbol2, Field2);
     return struct {
         value: std.enums.EnumFieldStruct(States, Entry2, null),
-        defaultSymbol: Symbol,
-        pub const Tape = []const Symbol;
+        defaultSymbol: Symbol2,
+        pub const Symbol = Symbol2;
         pub const State = States;
         pub const Field = Field2;
         pub const Entry = Entry2;
@@ -40,9 +40,9 @@ pub fn State(comptime cfg: anytype) type {
     const Cfg = @TypeOf(cfg);
     return struct {
         const Self = @This();
+        const Symbol = Cfg.Symbol;
         const State = Cfg.State;
-        const Tape = Cfg.Tape;
-        const Symbol = std.meta.Child(Tape);
+        const Tape = []const Symbol;
         state: ?Self.State,
         head: comptime_int,
         tapeRight: Tape,
@@ -57,25 +57,9 @@ pub fn State(comptime cfg: anytype) type {
             };
         }
 
-        fn refillTape(comptime self: Self) bool {
-            if (self.head < 0) {
-                return -self.head > self.tapeLeft.len;
-            } else {
-                return self.head >= self.tapeRight.len;
-            }
-        }
-
-        fn indexTape(comptime self: Self) Symbol {
-            if (self.head < 0) {
-                return self.tapeLeft[-self.head - 1];
-            } else {
-                return self.tapeRight[self.head];
-            }
-        }
-
-        fn getField(comptime self: Self) Cfg.Field {
+        fn getField(comptime self: Self, comptime tape: Tape, index: comptime_int) Cfg.Field {
             const entry = @field(cfg.value, @tagName(self.state.?));
-            const symbol = if (self.refillTape()) cfg.defaultSymbol else self.indexTape();
+            const symbol = if (index >= tape.len) cfg.defaultSymbol else tape[index];
             switch (@typeInfo(Self.Symbol)) {
                 .@"enum" => return @field(entry, @tagName(symbol)),
                 .int => return entry[symbol],
@@ -91,21 +75,15 @@ pub fn State(comptime cfg: anytype) type {
 
         pub fn next(comptime self: Self) Self {
             if (self.state == null) return self;
-            const field = self.getField();
             comptime var out = self;
-            if (self.refillTape()) {
+            const currentTape = if (self.head >= 0) &out.tapeRight else &out.tapeLeft;
+            const index = if (self.head >= 0) self.head else -self.head - 1;
+            const field = self.getField(currentTape.*, index);
+            if (index >= currentTape.len) {
                 const toAppend = [1]Symbol{field.write};
-                if (self.head >= 0) {
-                    out.tapeRight = out.tapeRight ++ toAppend;
-                } else {
-                    out.tapeLeft = out.tapeLeft ++ toAppend;
-                }
+                currentTape.* = currentTape.* ++ toAppend;
             } else {
-                if (self.head >= 0) {
-                    out.tapeRight = set(out.tapeRight, self.head, field.write);
-                } else {
-                    out.tapeLeft = set(out.tapeLeft, -self.head - 1, field.write);
-                }
+                currentTape.* = set(currentTape.*, index, field.write);
             }
             switch (field.move) {
                 .left => out.head -= 1,
