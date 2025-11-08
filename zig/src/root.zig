@@ -101,6 +101,5 @@ fn generateConfig() tm.Config(State, Symbol) {
 pub fn haveFun() bool {
     const tmConfig = comptime generateConfig();
     const tmState = tm.State(tmConfig).init(.state_0);
-    @compileLog(tmConfig.value);
     return comptime tmState.halts();
 }

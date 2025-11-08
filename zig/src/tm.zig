@@ -29,7 +29,7 @@ pub fn Config(States: type, Symbol: type) type {
     return struct {
         value: std.enums.EnumFieldStruct(States, Entry2, null),
         defaultSymbol: Symbol,
-        pub const Tape = []Symbol;
+        pub const Tape = []const Symbol;
         pub const State = States;
         pub const Field = Field2;
         pub const Entry = Entry2;
@@ -83,22 +83,28 @@ pub fn State(comptime cfg: anytype) type {
             }
         }
 
+        fn set(comptime xs: []const Symbol, i: comptime_int, comptime x: Symbol) []const Symbol {
+            const left = xs[0..i];
+            const right = xs[i + 1 ..];
+            return left ++ [1]Symbol{x} ++ right;
+        }
+
         pub fn next(comptime self: Self) Self {
             if (self.state == null) return self;
             const field = self.getField();
             comptime var out = self;
             if (self.refillTape()) {
-                const T = []Symbol;
+                const toAppend = [1]Symbol{field.write};
                 if (self.head >= 0) {
-                    out.tapeRight = out.tapeRight ++ @as(T, @constCast(([1]Symbol{field.write})[0..1]));
+                    out.tapeRight = out.tapeRight ++ toAppend;
                 } else {
-                    out.tapeLeft = out.tapeLeft ++ [1]Symbol{field.write};
+                    out.tapeLeft = out.tapeLeft ++ toAppend;
                 }
             } else {
                 if (self.head >= 0) {
-                    out.tapeRight[self.head] = field.write;
+                    out.tapeRight = set(out.tapeRight, self.head, field.write);
                 } else {
-                    out.tapeLeft[-self.head - 1] = field.write;
+                    out.tapeLeft = set(out.tapeLeft, -self.head - 1, field.write);
                 }
             }
             switch (field.move) {
